@@ -24,8 +24,10 @@ Route.get('/', async () => {
   return { hello: 'world' }
 })
 
-Route.group(() => {
-  Route.group(() => {
-    Route.resource('posts', 'PostController')
-  }).prefix('/v1')
-}).prefix('/api')
+Route.resource('posts', 'PostController').middleware({
+  store: ['auth'],
+  update: ['auth'],
+  destroy: ['auth'],
+})
+Route.post('register', 'AuthController.register')
+Route.post('login', 'AuthController.login')
