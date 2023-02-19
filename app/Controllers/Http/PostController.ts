@@ -23,17 +23,25 @@ export default class PostController {
 
     return response.json(post)
   }
-  public async store({ request }: HttpContextContract) {
+  public async store({ request, auth }: HttpContextContract) {
     const post = await prisma.post.create({
-      data: request.only(['title', 'content']),
+      data: {
+        title: request.input('title'),
+        content: request.input('content'),
+        userId: auth.user?.id,
+      },
     })
 
     return post
   }
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, auth }: HttpContextContract) {
     const post = await prisma.post.update({
       where: { id: params.id },
-      data: request.only(['title', 'content']),
+      data: {
+        title: request.input('title'),
+        content: request.input('content'),
+        userId: auth.user?.id,
+      },
     })
 
     return post
