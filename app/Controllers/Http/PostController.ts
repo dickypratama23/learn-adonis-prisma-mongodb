@@ -2,17 +2,26 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 
 export default class PostController {
-  public async index() {
+  public async index({ response }: HttpContextContract) {
     const posts = await prisma.post.findMany()
 
-    return posts
+    if (!posts?.length) {
+      return response.status(400).json({ message: 'No posts found' })
+    }
+
+    return response.json(posts)
   }
-  public async show({ params }: HttpContextContract) {
+  public async show({ response, params }: HttpContextContract) {
+    const { id } = params
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
-    return post
+    if (!post) {
+      return response.status(400).json({ message: 'Post not found' })
+    }
+
+    return response.json(post)
   }
   public async store({ request }: HttpContextContract) {
     const post = await prisma.post.create({
