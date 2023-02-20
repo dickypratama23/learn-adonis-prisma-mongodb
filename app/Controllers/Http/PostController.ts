@@ -24,6 +24,7 @@ export default class PostController {
     return response.json(post)
   }
   public async store({ request, auth }: HttpContextContract) {
+    // @ts-ignore
     const post = await prisma.post.create({
       data: {
         title: request.input('title'),
